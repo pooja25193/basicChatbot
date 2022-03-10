@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script type = "text/javascript"  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script type = "text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type = "text/javascript"  src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
+
+    <link rel="stylesheet" href="static/styles/style.css">
+    <script type="text/javascript" src="static/main.js">
+
+  </head>
+  <body>
+  	<div class="mainHead">
+        <div class="head">
+          <span>GIS ChatBot</span>
+        </div>
+     </div> 
+     
+
+     
+      
+     
+<div class="chat">   
+
+
+  <div class="main">
+
+          <!-- test div -->
+
+        <!--ENd Test -->
+      <div class="txt-divRes">
+        <p id="response"></p>         
+    </div>  
+  </div>
+</div>
+
+
+
+<div class="send">
+  <!--<input type="input" class="txt1 form-cotrol">-->
+
+  <textarea class="form-control txt1" rows="3" id="question"></textarea>  
+  
+  <!--<input type="button" class="btn btn1" value="SEND" onclick="sender()">-->
+  <input type="button" class="btn btn1" id="submit-button" value="SEND">
+
+  <button type = "button" style="position:absolute; left:48%;" onclick="startConverting();"><i class="fa fa-microphone"></i></button>
+
+  <button type = "button" style="position:absolute; left:51%;" onclick="stopConverting();"><i class="fa fa-remove"></i></button>
+
+
+</div>
+
+   
+</body>
+
+<script>
+
+      jQuery(document).ready(function() {
+      
+      		function startConverting () {
+          		<!--alert("test"); -->
+      		}
+
+
+              $("body").delegate("#testbtn", "click", function(){
+                   alert("Delegated Button Clicked")
+            });
+                          
+
+        $("#submit-button").click(function(e) {
+          e.preventDefault();
+
+
+          $.ajax({
+              type: "POST",
+              url: "/chatbot",
+              data: {
+                  question: $("#question").val()
+              },
+              success: function(result) {   
+                    $("#response").append('<div class="txt-div"><div class="txt msg">'+ $("#question").val()+'</div><div class="time">'+new Date().toLocaleTimeString()+'</div></div>'+'<div class="txt-div2"><div class="txt2 msg">'+result.response+'</div><div class="time2">'+new Date().toLocaleTimeString()+'</div></div>'); 
+                    $("#question").val("")
+                
+                    <!-- my test alert starts ---->
+                    if(result.response=="Sorry"){                     
+                        alert("Hello! I am an alert box!!");                          
+                        $("#response").append('<div class="txt-div2"><div class="txt2 msg"><button type="button" class="btn btn-primary mytest" id="testbtn" style="z-index:9999; position:fixed; ">Click here</button></div><div class="time2">'+new Date().toLocaleTimeString()+'</div></div>');
+                          
+                        
+                             
+                    }                
+                    <!-- my test alert ends ---->
+              },
+              error: function(result) {
+                  alert('error');
+              }
+              
+          });
+
+
+        });
+
+      });
+      
+      <!-- ------------------------ test --------------------  -->
+      var r = document.getElementById('question');
+			var speechRecognizer = new webkitSpeechRecognition();// a new speech recognition object
+			
+			//function to start listening to voice and then convert it to text
+			function startConverting () {
+				if('webkitSpeechRecognition' in window){
+					
+					speechRecognizer.continuous = true;
+					speechRecognizer.interimResults = true;
+					speechRecognizer.lang = 'en-IN';
+					speechRecognizer.start();
+					var finalTranscripts = '';
+					speechRecognizer.onresult = function(event){
+						var interimTranscripts = '';
+						for(var i = event.resultIndex; i < event.results.length; i++){
+							var transcript = event.results[i][0].transcript;
+							transcript.replace("\n", "<br>");
+							if(event.results[i].isFinal){
+								finalTranscripts += transcript;
+							}else{
+								interimTranscripts += transcript;
+							}
+						}
+						r.value = finalTranscripts + interimTranscripts ;
+					};
+					speechRecognizer.onerror = function (event) {
+					};
+				}else{
+					r.innerHTML = 'No browser support. Please upgrade your browser';
+				}
+			}
+			//function to stop listening
+			function stopConverting()
+			{
+				speechRecognizer.stop();
+			}
+			
+
+
+    </script>
+
+
+  
+</html>
+
+
+
+
+
+
